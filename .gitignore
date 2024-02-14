@@ -1,0 +1,8 @@
+account-service/target
+bill-service/target
+config-service/target
+deposit-service/target
+gateway-service/target
+notification-service/target
+registry-service/target
+.idea/
