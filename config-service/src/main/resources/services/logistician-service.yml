@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: create
+    properties:
+  datasourse:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/logistician_service_database
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+server:
+  servlet:
+    context-path: /bills
+    port: 8082

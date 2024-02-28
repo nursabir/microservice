@@ -11,4 +11,4 @@ spring:
       password: admin
 
 server:
-  post:8001
+  port: 8001

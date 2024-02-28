@@ -9,9 +9,9 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>account-service</module>
-        <module>bill-service</module>
-        <module>deposit-service</module>
+        <module>logistician-service</module>
+        <module>transportation-service</module>
+        <module>user-service</module>
         <module>config-service</module>
         <module>gateway-service</module>
         <module>notification-service</module>

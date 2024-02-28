@@ -8,7 +8,7 @@ hystrix:
 
 ribbon:
   ReadTimeout: 20000
-  ConnectTi meout: 20000
+  ConnectTimeout: 20000
 
 zuul:
   ignoredServices: '*'
@@ -17,19 +17,19 @@ zuul:
     socked-timeout-mills: 20000
 
   routes:
-    account-service:
-      path: /accounts/**
-      serviceId: account-service
+    user-service:
+      path: /user/**
+      serviceId: user-service
       stripPrefix: false
 
-    bill-service:
-      path: /bills/**
-      serviceId: bill-service
+    logistician-service:
+      path: /logistician/**
+      serviceId: logistician-service
       stripPrefix: false
 
-    deposite-service:
-      path: /deposits/**
-      serviceId: deposit-service
+    transportation-service:
+      path: /transportation/**
+      serviceId: transportation-service
       stripPrefix: false
 
 server:
