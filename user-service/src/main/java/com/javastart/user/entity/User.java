@@ -10,8 +10,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
+@Table(name = "users")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
     @Column
     private String name;

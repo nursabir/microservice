@@ -1,9 +1,12 @@
 spring:
   application:
-    name: bill-service
+    name: transportation-service
   cloud:
     config:
       uri: http://localhost:8001
       fail-fast: true
       password: admin
       username: user
+
+server:
+  port: 1010

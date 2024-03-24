@@ -74,6 +74,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.1.4</version>
                 <configuration>
                     <mainClass>com.javastart.registry.RegistryApplication</mainClass>
                 </configuration>

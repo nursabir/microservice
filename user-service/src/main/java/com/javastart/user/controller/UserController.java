@@ -3,6 +3,7 @@ package com.javastart.user.controller;
 import com.javastart.user.dto.UserRequestDTO;
 import com.javastart.user.dto.UserResponseDTO;
 import com.javastart.user.service.UserService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,4 +21,8 @@ public class UserController {
     public Long addUser(@RequestBody UserRequestDTO userRequestDTO){
         return userService.createUser(userRequestDTO.getName(), userRequestDTO.getSurname(), userRequestDTO.getPhone(), userRequestDTO.getEmail());
     }
+
+
+
+
 }

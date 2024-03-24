@@ -18,11 +18,11 @@ public class Transportation {
     private Long transportationId;
 
     // пункт погрузки
-    @Column
+    @Column(name = "from_location")
     private String from;
 
     // пункт выгрузки
-    @Column
+    @Column(name = "to_location")
     private String to;
 
     // кто заказал услугу

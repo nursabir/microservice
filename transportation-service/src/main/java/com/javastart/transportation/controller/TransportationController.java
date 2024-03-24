@@ -2,11 +2,11 @@ package com.javastart.transportation.controller;
 
 import com.javastart.transportation.dto.TransportationRequestDTO;
 import com.javastart.transportation.dto.TransportationResponseDTO;
+import com.javastart.transportation.dto.TransportationResponseNotificationDTO;
 import com.javastart.transportation.rest.UserResponseDTO;
 import com.javastart.transportation.rest.UserServiceClient;
 import com.javastart.transportation.service.TransportationService;
 import jakarta.ws.rs.core.MediaType;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,18 +17,18 @@ public class TransportationController {
 
     private final TransportationService transportationService;
 
-   // private final UserServiceClient userServiceClient;
+    // private final UserServiceClient userServiceClient;
 
     @Autowired
     public TransportationController(TransportationService transportationService, UserServiceClient userServiceClient) {
         this.transportationService = transportationService;
-      //  this.userServiceClient = userServiceClient;
+        //  this.userServiceClient = userServiceClient;
     }
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON)
     public TransportationResponseDTO transportationSave(@RequestBody TransportationRequestDTO transportationRequestDTO) {
 
-        return TransportationResponseDTO.from(transportationService.transport(transportationRequestDTO.getUserId(),
+        return TransportationResponseDTO.from(transportationService.saveTransportation(transportationRequestDTO.getUserId(),
                 transportationRequestDTO.getTransportationFrom(),
                 transportationRequestDTO.getTransportationTo(),
                 transportationRequestDTO.getDateOfShipment(),
@@ -38,7 +38,7 @@ public class TransportationController {
 
     // все пользователи у которых есть перевозки
     @GetMapping(value = "/get/allUsers", produces = MediaType.APPLICATION_JSON)
-    public List<UserResponseDTO> getUsers(){
+    public List<UserResponseDTO> getUsers() {
         return transportationService.getAllUsers();
     }
 
@@ -59,18 +59,16 @@ public class TransportationController {
             transportationService.setStateCanceled(idTransportation);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 
-    @PatchMapping(value = "/{idTransportation}/setState/accepted")
-    public boolean setTransportationStateAccepted(@PathVariable Long idTransportation) {
-        try {
-            transportationService.setStateAccepted(idTransportation);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    // так же отправляет сообщение на майл пользователю чья перевозка была сделана
+    @PatchMapping(value = "/{id_transportation}/setState/accepted")
+    @ResponseBody
+    public TransportationResponseNotificationDTO setTransportationStateAccepted(@PathVariable("id_transportation") Long idTransportation) {
+        return transportationService.setStateAccepted(idTransportation);
     }
 
 

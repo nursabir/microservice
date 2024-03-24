@@ -18,7 +18,10 @@ public class UserService {
     }
 
     public Long createUser(String name, String surname, String phone, String email){
+        // транзиент
         User newUser = new User(name, surname, phone, email);
         return userRepository.save(newUser).getUserId();
     }
+
+
 }

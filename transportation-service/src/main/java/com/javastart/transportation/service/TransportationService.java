@@ -2,9 +2,8 @@ package com.javastart.transportation.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.javastart.transportation.dto.TransportationResponseDTO;
+import com.javastart.transportation.dto.TransportationResponseNotificationDTO;
 import com.javastart.transportation.entity.Transportation;
-import com.javastart.transportation.exception.SavingToDatabaseException;
 import com.javastart.transportation.rest.UserResponseDTO;
 import com.javastart.transportation.rest.UserServiceClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,6 +13,7 @@ import com.javastart.transportation.repository.TransportationRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +36,7 @@ public class TransportationService {
     }
 
 
-    public Transportation transport(Long idOfUser, String from, String to, Date dateOfShipment, Date dateOfUnloading, Double cost) {
+    public Transportation saveTransportation(Long idOfUser, String from, String to, Date dateOfShipment, Date dateOfUnloading, Double cost) {
         Transportation transportation = Transportation.builder()
                 .from(from)
                 .cost(cost)
@@ -44,12 +44,11 @@ public class TransportationService {
                 .to(to)
                 .dateOfUnloading(dateOfUnloading)
                 .idOfUser(idOfUser)
+                .state(Transportation.State.NOT_REVIEWED)
                 .build();
 
-        return transportationRepository.save(transportation)
-                .orElseThrow(() -> new SavingToDatabaseException("Ошибка сохранения перевозки"));
+        return transportationRepository.save(transportation);
     }
-
 
 
     public List<UserResponseDTO> getAllUsers() {
@@ -70,17 +69,43 @@ public class TransportationService {
         return countOfUpdate == 1;
     }
 
-    public boolean setStateAccepted(Long idTransportation) {
+    public TransportationResponseNotificationDTO setStateAccepted(Long idTransportation) {
+
         int countOfUpdate = transportationRepository.updateStateById(idTransportation, Transportation.State.ACCEPTED);
-        Long idOfUser = transportationRepository.findUserIdByTransportationId(idTransportation);
+        if(countOfUpdate>=1) {
+            Transportation transportation = transportationRepository.findById(idTransportation).get();
+            Long idOfUser = transportation.getIdOfUser();
+            UserResponseDTO userResponseDTO = userServiceClient.getUserById(idOfUser);
+
+            String emailUser = userResponseDTO.getEmail();
+
+            return createResponse(transportation, emailUser);
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    private TransportationResponseNotificationDTO createResponse(Transportation transportation, String email){
+        TransportationResponseNotificationDTO transportationResponseNotificationDTO = TransportationResponseNotificationDTO.builder()
+                .cost(transportation.getCost())
+                .transportationTo(transportation.getTo())
+                .transportationFrom(transportation.getFrom())
+                .dateOfShipment(transportation.getDateOfShipment())
+                .dateOfUnloading(transportation.getDateOfUnloading())
+                .email(email)
+                .build();
+
         try {
-            rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_TRANSPORTATION, ROUTING_KEY_TRANSPORTATION,
-                    new ObjectMapper().writeValueAsString(userServiceClient.getUserById(idOfUser)));
+            rabbitTemplate.convertAndSend(TOPIC_EXCHANGE_TRANSPORTATION, ROUTING_KEY_TRANSPORTATION, new ObjectMapper().writeValueAsString(transportationResponseNotificationDTO));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return countOfUpdate == 1;
+        return transportationResponseNotificationDTO;
     }
+
+
+
+
 
 
 }

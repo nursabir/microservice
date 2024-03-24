@@ -16,8 +16,7 @@ public class RabbitMQConfig {
     private static final String ROUTING_KEY_TRANSPORTATION = "js.key.transportation";
 
     // переменная для создания очередей и exchange и управления с ними
-    @Autowired
-    private AmqpAdmin amqpAdmin;
+
 
     @Bean
     public TopicExchange transportationExchange() {

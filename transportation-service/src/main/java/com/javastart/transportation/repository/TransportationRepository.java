@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface TransportationRepository extends CrudRepository<Transportation, Long> {
     
 
-    Optional<Transportation> save(Transportation transportation);
+    Transportation save(Transportation transportation);
 
     // возвращает количество обновленных записей
     @Modifying
